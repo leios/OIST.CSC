@@ -1,6 +1,6 @@
 /*-------------README---------------------------------------------------------//
 *
-* Alright! Let's compile our first programin C++! 
+* Alright! Let's compile our first program in C++! 
 *
 * You might have already noticed my weird heading and such for this README file,
 * it is common practice to start every C++ file with some sort of heading that 
@@ -14,9 +14,9 @@
 * You can also comment out the rest of individual lines by using the following
 * symbols: "//". You will see them used soon enough. 
 *
-* Now back to the heading! This type of heading established the number of 
-* characters in a given line before you reach the end of the end of traditional
-* terminal line space and the line will wrap around to the next line.
+* Now back to the heading! This type of heading establishes the number of 
+* characters in a given line before you reach the end of a traditional
+* terminal's line space and the line will wrap around to the next line.
 * Why is that important? It really isn't. In fact, it's kinda just tradition,
 * I still do it, though, because I use a terminal to code in. It's kinda 
 * annoying to have my line cut in half when I have to copy and paste it later on
@@ -28,7 +28,7 @@
 * The answer, of course, is obvious:
 * "Everyone else."
 *
-* You see, unless you are a fairly competent computational scientists, most
+* You see, unless you are a fairly competent computational scientist, most
 * code nowadays is developed my multiple people at once. This means that your
 * code will be seen by just about everyone in your immediate party. If they 
 * can't figure out what you are trying to say or do... well, good luck. You will
