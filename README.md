@@ -18,3 +18,5 @@ This project will be significantly different than other projects intended to tea
 As another note: my own coding style is significantly different than those who have had formal training in Computer Science. I will be teaching in the way I find most interesting and fulfilling. Please feel free to drop in and learn a little about different coding practices when you have the time!
 
 Toodles!
+
+PS: I think I will have a video up detailing each of the lessons, so feel free to stop by my youtube chanel every once in a while.
