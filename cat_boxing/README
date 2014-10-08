@@ -1,0 +1,19 @@
+So, here's the scenario: you live in Japan and in a decade, the Japanese 
+government wants to get rid of all the cats on Tashirojima, the cat island. 
+Well, for a human, this is a simple process that takes a very, very long time.
+You just have to gather the cats, put them in boxes and ship them to Russia...
+Or wherever it is you want to ship them. Because it takes so long to find all 
+the cats, you are thinking about making a robot that does the boxing for you.
+All the robot needs to do is take the cats you give it and place those cats in 
+a box. Once a box is full, the robot will then throw the box into the back of a 
+truck. Simple, right? 
+
+Well, it would be simple if your robot was a little human servant, but 
+unfortunately, it's not. It's a robot. Standard logical rules apply. Throughout
+this upcoming week, I'll be updating this repository every other day with new
+approximations your robot could make to send as many cats as possible to Russia.
+
+Or wherever you want to send them. I won't judge.
+
+Anyway, the first code will be committed to this repository Wednesday, so feel
+free to come by and check it out!
