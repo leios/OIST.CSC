@@ -1,0 +1,31 @@
+Let's start with a simple approximation, one that seems logical my some 
+accounts: the case of fluid cats. 
+
+I mean, think about it. Have you ever seen a cat perfectly fill any container it
+finds? No? Well, I have. For this reason, pretending cats are fluids might not
+be too bad of an approximation, and it is certainly one that is easy to model
+
+For this lesson, all we are doing is creating a code that will place cats into
+boxes. Once the cats are in boxes, the code will then place the boxes in a 
+truck, but this should be quite simple -- especially considering that we are 
+approximating the truck to be completely filled (with no empty space) once we 
+place a given number of boxes in it. This means that our little robot executing
+our code can just place the boxes in by filling all the space in the x, y, and z
+directions. Hopefully this shouldn't be too tricky.
+
+Even placing the cats in the boxes will not be too difficult. I mean, we just 
+need to find the cat's weight to find it's mass and turn that mass into a 
+volume. Once done, we throw it into a box with other cats. If there are too 
+many cats in a box, a new box is opened and cats are placed in that one. 
+
+Now, when I say something is "simple," that does not mean it is "easy." Those 
+are two very different things. Please keep this in mind when learning to code.
+Just because something is conceptually simple, that does not necessarily mean
+it is easy to do. 
+
+All that said, let's get to it! I have directories for C++, Fortran, and Python,
+and a copy of the necessary code in each one.
+
+I hope it is easy to follow from here! Let me know if it's not!
+
+
