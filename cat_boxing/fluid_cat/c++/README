@@ -19,4 +19,11 @@
 *
 * I think that's all for now, so let's move on to the actual code!
 *
+* Remember your compile instructions! 
+*
+*    g++ fluid_cat.cpp -o fluid_cats
+*    ./fluid_cats
+*
+* Good Luck!
+*
 *-----------------------------------------------------------------------------*/
