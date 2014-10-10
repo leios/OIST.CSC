@@ -1,0 +1,30 @@
+!!-------------README---------------------------------------------------------!!
+!
+! Alright! Let's write some code to simulate fluid cats in baxes! 
+!
+! This code can be split into the following parts:
+! 
+! 1. Generation of randomly sized cats
+! 
+! 2. Placement of cats in box
+! 
+! 3. Placement of box in truck.
+!
+! we will be making the following assumptions:
+! 
+! 1. Cat density is a defined property (it is not in real life, but who cares?)
+!
+! 2. The boxes are all the same size
+!
+! 3. The boxes perfectly fit in the back of the truck
+!
+! I think that's all for now, so let's move on to the actual code!
+!
+! Remember your compile instructions! 
+!
+!    gfortran fluid_cat.f95 -o fluid_cats
+!    ./fluid_cats
+!
+! Good Luck!
+!
+!!----------------------------------------------------------------------------!!
