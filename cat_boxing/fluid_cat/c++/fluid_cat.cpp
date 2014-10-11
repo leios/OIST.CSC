@@ -130,10 +130,10 @@ void fill_truck(){
  
     while (i <= truck_size){
 
-    int cats_in_box = fill_box();
-    cat_num = cat_num + cats_in_box;
+        int cats_in_box = fill_box();
+        cat_num = cat_num + cats_in_box;
 
-    i++;
+        i++;
     
     // from previous logic, you should be able to follow up to the last line,
     // i++. This just means "add 1 to i!" It's only meant to be used in loops,
