@@ -112,7 +112,6 @@ subroutine fill_box(cats_in_box)
         ! This will keep going until "empty_room" is under 0... which means 
         ! there is no longer any room in the box!
 
-
         ! First, let's randomly generate a cat of some size between 1 and 100.
         ! This isn't too bad. There is a subroutine that is common to all of 
         ! fortran to do it called "random_number()"
