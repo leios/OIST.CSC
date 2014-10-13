@@ -1,0 +1,24 @@
+Yeah, yeah. I hear what you are saying. The fluid cat approximation does not 
+make a lot of sense. In reality, you are completely right. I mean, even if we
+sedated all the cats so they do not kill each other in their boxes, the cats 
+will still poo and pee all ove rthe other cats, preading all sorts of diseases
+and unwanted materials. You might not care too much about that, but there are 
+some organizations that do. So we might as well clean up our act now so the 
+Japanese government does not look like a bunch of brutes.
+
+So, how do we do this? Well, whenever a cat comes along the conveyer belt, we
+find it's volume and then find an appropriately sized cage for the cat. 
+This part should be simple. When a cat is small, it's placed in a small cage.
+When it is large, it is placed in a large cage, and when it is somewhere 
+in-between, it is placed in a medium-sized cage. It's as simple as that...
+
+Unfortunately, this makes it incredibly challening to place all the boxes 
+appropriately in the truck. I mean, with the fluid cat approximation, we just 
+assumed that 40 boxes could fit in the truck. In this case each box has a 
+volume that is not necessarily equal to the volume of the other boxes in the
+truck. This means there needs to be some sort of planning in how the robot
+places the boxes in the truck. This planning takes a good deal of rational
+thought (even if you are human), which means it will be doubly difficult to 
+figure out how to write a code to simulate that logic. 
+
+Let's see what we can do!
