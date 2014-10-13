@@ -27,8 +27,8 @@ Table of contents:
 
 1.  Hello World!
 
-2.  Cat_boxing
+2.  Cat Boxing
 
-    2a. fluid_cat
+    2a. Fluid Cat
 
-    2b. caged_cat
+    2b. Caged Cat
