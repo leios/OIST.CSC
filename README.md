@@ -24,7 +24,11 @@ PS: I think I will have a video up detailing each of the lessons, so feel free t
 =========
 
 Table of contents:
+
 1.  Hello World!
+
 2.  Cat_boxing
+
     2a. fluid_cat
+
     2b. caged_cat
