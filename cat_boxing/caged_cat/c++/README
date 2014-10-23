@@ -10,4 +10,9 @@ So, here are the steps to get the code to work out appropriately:
 
 Sounds easy, right? Well, step 3's a bit tough.
 
+Also: You might have noticed a fe more files in this directory than normal, that
+is because I have included the slim version of the fluid cat approximation and
+an additional header file to link the functions we made last time to the file we
+are writing this time: "caged_cat.cpp".
+
 Good luck!
