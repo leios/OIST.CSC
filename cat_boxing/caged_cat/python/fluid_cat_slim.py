@@ -6,7 +6,6 @@ def generate_cat():
 
 
 def fill_box():
-    box_size = 400
     empty_room = 400
     j = 0
 
