@@ -52,7 +52,6 @@ def fill_box():
     # This function is just like the last one. I hope functions are starting to
     # make some more sense.
  
-    box_size = 400
     empty_room = 400
     j = 0
 
