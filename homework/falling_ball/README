@@ -15,3 +15,7 @@ v = v + 9.81*t
 
 You should be able to update both in the same while loop, which should provide 
 an appropriate solution (with a bit of error depending on your timestep).
+
+Update: There are at least two solutions to this problem. One uses the velocity
+to keep track of the ball's position, the other finds the correct timestep to
+solve the acceleration equation directly.
