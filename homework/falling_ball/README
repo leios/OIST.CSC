@@ -1,0 +1,17 @@
+For this assignment, we are calculating the time it would take for a ball to 
+fall to the ground from a distance of 5 meters. I know this can be solved 
+analytically, which is precisely why it is the first homework assignment!
+
+Here is the equation you will need for a rough approximation:
+
+x = x - 0.5*9.81*t*t
+
+Note: This is only a rough approximation and will not provide accurate results
+unless you choose the exact correct time step. Why is it not accurate? Well, 
+because we do not take into account the changing velocity! Here is the 
+formula for velocity:
+
+v = v + 9.81*t
+
+You should be able to update both in the same while loop, which should provide 
+an appropriate solution (with a bit of error depending on your timestep).
