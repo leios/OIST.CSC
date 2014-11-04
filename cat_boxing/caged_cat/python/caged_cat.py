@@ -137,4 +137,3 @@ while is_full < 3:
 print("The truck is full! Let's move out and leave ", large_count - 4,
       " large cats, ", med_count - 6," medium-sized, cats and ",
       small_count - 12," small cats behind! Who needs 'em?")
-
