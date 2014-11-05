@@ -3,18 +3,17 @@ created a little robot to scour Lake Idonwannacode for frogs of all different
 stages of development. As the robot goes around the pond, you notice it is not
 counting the frogs properly! Your job is to write a function that can properly
 bin the data this robot collects. By this, I mean that your code should be able
-to accept the age of a frog and output the stage of development the frog is in.
-Your code should then count how many frogs are in each stage of development.
-
-Here are the stages of development we consider:
-    1. Egg
-    2. Tadpole
-    3. Tadpole with legs
-    4. Frog with tail
-    5. Adult frog
+to accept the age of a frog and place the frog into bins accoding to their age. 
+For the sake of this example, let's just create bins for every year of frog
+development.
 
 In this assignment, I have created a function for you to use in the file 
 "frog_found.py". This file will randomly pull a frog from the appropriate 
 distribution of frogs in a pond and output that frog's age. Please use this
-function in your code. If you don't, I will not penalize you, but it will be 
-best for everyone if you did. 
+function in your code. If you don't, though, it's not too big of a deal.
+
+The function you need is "find_frog". It outputs a random number in years, in
+precisely the same way we have been returning numbers from functions before.
+
+Oh. I also didn't use any tricks with the "frog_found.py" file. You should be
+able to follow it. Please feel free to open it up and take a look!
