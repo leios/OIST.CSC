@@ -5,10 +5,6 @@ Learning to code with scientific examples.
 
 =========
 
-Hey, I am Leios. I am a computational physicist with a Youtube channel here:
-
-https://www.youtube.com/user/leiosos
-
 I will be teaching my subscribers how to code in C++, Fortran, and Python in the next few months and have decided to use github for this purpose. We will then start working on all sorts of coding projects.
 
 =========
