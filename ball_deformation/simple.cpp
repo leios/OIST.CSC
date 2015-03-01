@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <fstream>
 
 /*----------------------------------------------------------------------------//
 * STRUCTURES AND FUNCTIONS
@@ -43,7 +44,7 @@ vector <point> create_sphere(double radius, double rest_length,
                              double init_v_x, double init_v_y, 
                              double init_v_z);
 vector <point> simulate(vector <point> curr_sphere, hook_param params);
-
+void write_file(vector<point> points);
 
 
 /*----------------------------------------------------------------------------//
@@ -67,6 +68,7 @@ int main(){
     init_v_x = 0; init_v_y = 0; init_v_z = 0;
     points = create_sphere(radius, rest_length, init_v_x, init_v_y, init_v_z); 
     points = simulate( points, params);
+    write_file(points);
 
 }
 
@@ -231,6 +233,8 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
 
     for (int i = 0; i < curr_sphere.size(); i++){
         for (int ii = 0; ii < 6; ii++){
+
+            // Setting which direction to check
             if (ii = 0){dir = curr_sphere[i].next.up;}
             if (ii = 1){dir = curr_sphere[i].next.down;}
             if (ii = 2){dir = curr_sphere[i].next.left;}
@@ -238,6 +242,7 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
             if (ii = 4){dir = curr_sphere[i].next.forw;}
             if (ii = 5){dir = curr_sphere[i].next.back;}
 
+            // Finding all necessary parameters between two points
             del_x = curr_sphere[i].x - curr_sphere[dir].x;
             del_y = curr_sphere[i].y - curr_sphere[dir].y;
             del_z = curr_sphere[i].z - curr_sphere[dir].z;
@@ -256,10 +261,12 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
 
             vel_tot = vel_fx + vel_fy + vel_fz;
 
+            // Now solving Hooke's Law
             solution[0] = del_tot;     solution[1] = vel_tot;
 
             solution = hookes(solution[0], solution[1], params);
 
+            // Intereting solution
             del_x = solution[0] * cos(theta_xy);
             del_y = solution[0] * sin(theta_xy);
             del_z = solution[0] * cos(theta_zy);
@@ -267,6 +274,7 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
             del_vy = solution[1] * sin(theta_xy);
             del_vz = solution[1] * cos(theta_zy);
 
+            // Adding the change in distance...
             curr_sphere[i].x += (0.5 * del_x);
             curr_sphere[i].y += (0.5 * del_y);
             curr_sphere[i].z += (0.5 * del_z);
@@ -274,6 +282,7 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
             curr_sphere[dir].y += (0.5 * del_y);
             curr_sphere[dir].z += (0.5 * del_z);
 
+            // Adding the change in velocity...
             curr_sphere[i].v_x += (0.5 * del_vx);
             curr_sphere[i].v_y += (0.5 * del_vy);
             curr_sphere[i].v_z += (0.5 * del_vz);
@@ -283,6 +292,7 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
 
         }
 
+        // Adding the change in distance due to overall velocity of point
         curr_sphere[i].x += params.timestep * curr_sphere[i].v_x;
         curr_sphere[i].y += params.timestep * curr_sphere[i].v_y;
         curr_sphere[i].z += params.timestep * curr_sphere[i].v_z;
@@ -290,4 +300,22 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
     }
 
 return curr_sphere;
+}
+
+// Now I need a function to write everything to a file.
+void write_file(vector<point> points){
+
+    ofstream output("out.dat");
+    if (output.is_open()){
+        for (int i = 0; i < points.size(); i++){
+            output << points[i].x << '\t' << points[i].y << '\t' 
+                   << points[i].z << '\t' << points[i].v_x << '\t'
+                   << points[i].v_y << '\t' << points[i].v_z 
+                   << endl;
+        }
+        
+        output.close();
+    }
+    else cout << "Cannot open output file. Sorry. =/" << endl;
+
 }
