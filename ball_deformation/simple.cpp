@@ -5,6 +5,22 @@
 *          few tiems and may implement it if this ends up becoming too slow in
 *          the future, but I think it should be fine.
 *
+*   ERROR: There is currently an error in the simulate function. It is due to
+*          A rather trivial geometrical miscalculation. I cannot determine the
+*          velocity in the direction of motion, which is necessary for Hooke's
+*          Law stuff. I have calculated all the necessary thetas... but am too
+*          tired to figure out where they need to go to get everything to work
+*          out. I will come back to this when I have time.
+*
+*          Note: the error presents itself as a bunch of NaN's in the point 
+*          vector after the simulate command. I believe it reads in the 
+*          positions correctly, though. Because everything is timestep 
+*          dependent, though... when part of the first timestep screws up, it
+*          all goes downhill.
+*
+*          Note 2: memory allocation error to boot. I think this is related. I
+*          will probably just rewrite the simulate function.
+*
 *-----------------------------------------------------------------------------*/
 
 #include <iostream>
@@ -186,34 +202,34 @@ vector <point> create_sphere(double radius, double rest_length,
 
             // UP
             if ( points[i].z == points[i + ii].z){
-                points[i].next.up = points[i+ii].z;
+                points[i].next.up = i+ii;
             }
 
             // RIGHT
             if ( points[i].y == points[i + ii].y){
-                points[i].next.right = points[i+ii].y;
+                points[i].next.right = i+ii;
             }
 
             // FORW
             if ( points[i].x == points[i + ii].x){
-                points[i].next.forw = points[i+ii].x;
+                points[i].next.forw = i+ii;
             }
 
             if ( i >= ii){
 
                 // DOWN
                 if ( points[i].z == points[i - ii].z){
-                    points[i].next.down = points[i-ii].z;
+                    points[i].next.down = i-ii;
                 }
 
                 // LEFT
                 if ( points[i].y == points[i - ii].y){
-                    points[i].next.left = points[i+ii].y;
+                    points[i].next.left = i-ii;
                 }
 
                 // BACK
                 if ( points[i].x == points[i - ii].x){
-                    points[i].next.back = points[i+ii].x;
+                    points[i].next.back = i-ii;
                 }
 
             }
@@ -228,7 +244,10 @@ vector <point> create_sphere(double radius, double rest_length,
 vector <point> simulate(vector <point> curr_sphere, hook_param params){
 
     int dir;
-    double del_x, del_y, del_z, theta_xy, theta_zy, del_tot;
+    double del_x, del_y, del_z, del_tot;
+
+    // I'll need these thetas
+    double theta_xz, theta_yz, theta_xy, theta_zy, theta_zx, theta_yx;
 
     // I need to get the velocities from each component in the spring direction
     double del_vx, del_vy, del_vz, vel_fx, vel_fy, vel_fz, vel_tot;
@@ -239,60 +258,88 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
 
     for (int i = 0; i < curr_sphere.size(); i++){
         for (int ii = 0; ii < 6; ii++){
+            cout << curr_sphere[i].x << endl;
 
             // Setting which direction to check
-            if (ii = 0){
+            if (ii == 0){
                 if (curr_sphere[i].next.up >= 0){
                     dir = curr_sphere[i].next.up;
                 }
             }
+            else dir = i;
 
-            if (ii = 1){
+            if (ii == 1){
                 if (curr_sphere[i].next.down >= 0){
                     dir = curr_sphere[i].next.down;
                 }
+                else dir = i;
             }
 
-            if (ii = 2){
+            if (ii == 2){
                 if (curr_sphere[i].next.left >= 0){
                     dir = curr_sphere[i].next.left;
                 }
+                else dir = i;
             }
 
-            if (ii = 3){
+            if (ii == 3){
                 if (curr_sphere[i].next.right >= 0){
                     dir = curr_sphere[i].next.right;
                 }
+                else dir = i;
             }
 
-            if (ii = 4){
+            if (ii == 4){
                 if (curr_sphere[i].next.forw >= 0){
                     dir = curr_sphere[i].next.forw;
                 }
+                else dir = i;
             }
 
-            if (ii = 5){
+            if (ii == 5){
                 if (curr_sphere[i].next.back >= 0){
                     dir = curr_sphere[i].next.back;
                 }
+                else dir = i;
             }
 
             // Finding all necessary parameters between two points
             del_x = curr_sphere[i].x - curr_sphere[dir].x;
             del_y = curr_sphere[i].y - curr_sphere[dir].y;
             del_z = curr_sphere[i].z - curr_sphere[dir].z;
-            theta_xy = atan( del_y / del_x);
-            theta_zy = atan( del_y / del_z);
+            if ( del_x != 0 && del_y != 0 && del_z !=0){
+                theta_xy = atan( del_y / del_x);
+                theta_zy = atan( del_y / del_z);
+                theta_zx = atan( del_x / del_z);
+                theta_yx = atan( del_x / del_y);
+                theta_xz = atan( del_z / del_x);
+                theta_yz = atan( del_z / del_x);
+            }
+            else{
+                theta_xy = 0;
+                theta_zy = 0;
+                theta_zx = 0;
+                theta_yx = 0;
+                theta_xz = 0;
+                theta_yz = 0;
 
-            del_tot = del_x*del_x + del_y*del_y + del_z*del_z;
+            }
+            cout << del_x << '\t' << dir << '\t' << del_y << '\t' << del_z
+                 << '\t' << theta_xy << '\t' << theta_zy << endl;
+
+            del_tot = (del_x*del_x) + (del_y*del_y) + (del_z*del_z);
+            cout << del_tot << endl;
 
             del_vx = curr_sphere[i].v_x - curr_sphere[dir].v_x;
             del_vy = curr_sphere[i].v_y - curr_sphere[dir].v_y;
             del_vz = curr_sphere[i].v_z - curr_sphere[dir].v_z;
+            cout << del_vx << del_vy << del_vz << endl;
 
+//            if (cos(theta_zy) != 0 && cos(theta_xy) != 0...
             vel_fz = del_vz / cos(theta_zy);
             vel_fy = del_vy / sin(theta_xy);
             vel_fx = del_vx / cos(theta_xy);
+            cout << vel_fx << vel_fy << vel_fx;
 
             vel_tot = vel_fx + vel_fy + vel_fz;
 
@@ -340,7 +387,8 @@ return curr_sphere;
 // Now I need a function to write everything to a file.
 void write_file(vector<point> points){
 
-    ofstream output("out.dat", std::ofstream::out | std::ofstream::app);
+    ofstream output("/storage/output/out.dat", 
+                    std::ofstream::out | std::ofstream::app);
     if (output.is_open()){
         for (int i = 0; i < points.size(); i++){
             output << points[i].x << '\t' << points[i].y << '\t' 
@@ -357,7 +405,7 @@ void write_file(vector<point> points){
 
 // I may need to clear the output at the start of each run...
 void clear_output(){
-    ofstream output("out.dat");
+    ofstream output("/storage/output/out.dat");
     if (output.is_open()){
         output.clear();
         output.close();
