@@ -38,7 +38,7 @@ class hook_param{
 };
 
 vector <double> hookes(double dist, double velocity, hook_param params);
-void test();
+void test(hook_param params);
 vector <point> create_sphere(double radius, double rest_length,
                              double init_v_x, double init_v_y, 
                              double init_v_z);
@@ -50,7 +50,14 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params);
 * MAIN
 *-----------------------------------------------------------------------------*/
 int main(){
-    test();
+
+    hook_param params;
+    params.timestep     = 0.0001;
+    params.mass         = 0.001;
+    params.spring_const = 1;
+    params.rest_l       = 10;
+
+    test(params);
 
     double radius = 5.0;
     double rest_length = 0.5 * radius; 
@@ -59,6 +66,7 @@ int main(){
 
     init_v_x = 0; init_v_y = 0; init_v_z = 0;
     points = create_sphere(radius, rest_length, init_v_x, init_v_y, init_v_z); 
+    points = simulate( points, params);
 
 }
 
@@ -83,13 +91,8 @@ vector<double> hookes(double dist, double velocity, hook_param params){
 }
 
 // Test for Hooke's function... and potentially RK4 in a bit. 
-void test(){
+void test(hook_param params){
 
-    hook_param params;
-    params.timestep     = 0.0001;
-    params.mass         = 0.001;
-    params.spring_const = 1;
-    params.rest_l       = 10;
     vector<double> solution;
     double distance = 9.0,velocity = 0;
 
@@ -279,5 +282,12 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
             curr_sphere[dir].v_z += (0.5 * del_vz);
 
         }
+
+        curr_sphere[i].x += params.timestep * curr_sphere[i].v_x;
+        curr_sphere[i].y += params.timestep * curr_sphere[i].v_y;
+        curr_sphere[i].z += params.timestep * curr_sphere[i].v_z;
+
     }
+
+return curr_sphere;
 }
