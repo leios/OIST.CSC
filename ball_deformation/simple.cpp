@@ -1,7 +1,9 @@
 /*-------------simple.cpp-----------------------------------------------------//
 *
-* Purpose: We have another file with RK4... but I don't think we really need 
-* that. We can solve somewhat directly by just choosing a small timestep.
+* Purpose: This file is a simple example of how we can simulate the defomation
+*          of balls with a newton-solver algorithm. I have referred to RK4 a 
+*          few tiems and may implement it if this ends up becoming too slow in
+*          the future, but I think it should be fine.
 *
 *-----------------------------------------------------------------------------*/
 
@@ -23,10 +25,10 @@ struct closest{
 // Class to hold all values of particles.
 class point{
     public:
-        int step_num;                                  //Time-step number. 
-        double x, y, z;                                //Position in x, y, z
-        double v_x, v_y, v_z;                          //Velocity in x, y, z
-        closest next;                                  //Closest points
+        int step_num;                                  // Time-step number. 
+        double x, y, z;                                // Position in x, y, z
+        double v_x, v_y, v_z;                          // Velocity in x, y, z
+        closest next;                                  // Closest points
 };
 
 // Class for all the parameters for hooke's law
@@ -276,7 +278,6 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
             curr_sphere[dir].v_y += (0.5 * del_vy);
             curr_sphere[dir].v_z += (0.5 * del_vz);
 
-            
         }
     }
 }
