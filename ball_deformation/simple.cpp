@@ -45,6 +45,7 @@ vector <point> create_sphere(double radius, double rest_length,
                              double init_v_z);
 vector <point> simulate(vector <point> curr_sphere, hook_param params);
 void write_file(vector<point> points);
+void clear_output();
 
 
 /*----------------------------------------------------------------------------//
@@ -52,13 +53,14 @@ void write_file(vector<point> points);
 *-----------------------------------------------------------------------------*/
 int main(){
 
+    clear_output();
     hook_param params;
     params.timestep     = 0.0001;
     params.mass         = 0.001;
     params.spring_const = 1;
     params.rest_l       = 10;
 
-    test(params);
+//    test(params);
 
     double radius = 5.0;
     double rest_length = 0.5 * radius; 
@@ -67,6 +69,10 @@ int main(){
 
     init_v_x = 0; init_v_y = 0; init_v_z = 0;
     points = create_sphere(radius, rest_length, init_v_x, init_v_y, init_v_z); 
+    write_file(points);
+
+    // ERROR... I think we get a lot of NaN's because there is no value in that
+    // direction...
     points = simulate( points, params);
     write_file(points);
 
@@ -235,12 +241,41 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
         for (int ii = 0; ii < 6; ii++){
 
             // Setting which direction to check
-            if (ii = 0){dir = curr_sphere[i].next.up;}
-            if (ii = 1){dir = curr_sphere[i].next.down;}
-            if (ii = 2){dir = curr_sphere[i].next.left;}
-            if (ii = 3){dir = curr_sphere[i].next.right;}
-            if (ii = 4){dir = curr_sphere[i].next.forw;}
-            if (ii = 5){dir = curr_sphere[i].next.back;}
+            if (ii = 0){
+                if (curr_sphere[i].next.up >= 0){
+                    dir = curr_sphere[i].next.up;
+                }
+            }
+
+            if (ii = 1){
+                if (curr_sphere[i].next.down >= 0){
+                    dir = curr_sphere[i].next.down;
+                }
+            }
+
+            if (ii = 2){
+                if (curr_sphere[i].next.left >= 0){
+                    dir = curr_sphere[i].next.left;
+                }
+            }
+
+            if (ii = 3){
+                if (curr_sphere[i].next.right >= 0){
+                    dir = curr_sphere[i].next.right;
+                }
+            }
+
+            if (ii = 4){
+                if (curr_sphere[i].next.forw >= 0){
+                    dir = curr_sphere[i].next.forw;
+                }
+            }
+
+            if (ii = 5){
+                if (curr_sphere[i].next.back >= 0){
+                    dir = curr_sphere[i].next.back;
+                }
+            }
 
             // Finding all necessary parameters between two points
             del_x = curr_sphere[i].x - curr_sphere[dir].x;
@@ -305,7 +340,7 @@ return curr_sphere;
 // Now I need a function to write everything to a file.
 void write_file(vector<point> points){
 
-    ofstream output("out.dat");
+    ofstream output("out.dat", std::ofstream::out | std::ofstream::app);
     if (output.is_open()){
         for (int i = 0; i < points.size(); i++){
             output << points[i].x << '\t' << points[i].y << '\t' 
@@ -314,6 +349,17 @@ void write_file(vector<point> points){
                    << endl;
         }
         
+        output.close();
+    }
+    else cout << "Cannot open output file. Sorry. =/" << endl;
+
+}
+
+// I may need to clear the output at the start of each run...
+void clear_output(){
+    ofstream output("out.dat");
+    if (output.is_open()){
+        output.clear();
         output.close();
     }
     else cout << "Cannot open output file. Sorry. =/" << endl;
