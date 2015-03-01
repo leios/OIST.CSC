@@ -3,7 +3,7 @@
 Remember that video you saw of the golf ball hitting a steel wall and bouncing
 like a bouncy-ball? Yeah. We are going to test that. Now.
 
-This should be a simple process. We implement RK4, create a sphere of spheres
+This should be a simple process. Wecreate a sphere of spheres
 with hook's law keeping them together. We launch it at a wall and see it bounce
 back.
 
