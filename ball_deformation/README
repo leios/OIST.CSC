@@ -1,0 +1,21 @@
+#-------------README-----------------------------------------------------------#
+
+Remember that video you saw of the golf ball hitting a steel wall and bouncing
+like a bouncy-ball? Yeah. We are going to test that. Now.
+
+This should be a simple process. We implement RK4, create a sphere of spheres
+with hook's law keeping them together. We launch it at a wall and see it bounce
+back.
+
+We should see that the spring constant must be drastically different for a golf
+ball and a bouncy ball...
+
+And yeah, this is just a first approximation. The spring constant changes in the
+middle of a golf ball. Look up golf ball manufacturing. 
+
+I don't think the dimples should play an effect, really. If they do, that's too
+much computational power.
+
+That is all.
+
+#------------------------------------------------------------------------------#
