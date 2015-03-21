@@ -11,6 +11,11 @@
 *
 *   State: Currently adding in the hard_sphere collisions. Woo!
 *
+*   Notes: I should massacre the vbots code and stick it into this by imbedding
+*          python into c++ code. This is somewhat documented online. This would
+*          mean that I could generate a series of png files rather than output
+*          files in the end, saving a good bit or writing time and space.
+*
 *-----------------------------------------------------------------------------*/
 
 #include <iostream>
