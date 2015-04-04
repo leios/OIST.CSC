@@ -38,8 +38,8 @@ struct vox_cube{
 };
 
 vector<part> simulate(double cube_length, vector<part> particles, int max_time,
-                      double box_length, double timestep);
-vector<vox_cube> dopper(vector<part> particles);
+                      double timestep);
+vector<vox_cube> doppler(vector<part> particles);
 vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
                       double r2, double mass_1, double mass_2);
 vector <part> hard_sphere(part part_1, part part_2, double timestep);
@@ -51,6 +51,7 @@ vector <part> hard_sphere(part part_1, part part_2, double timestep);
 int main(){
 
     vector<part> particles = fill_box(40, 40, 40, 1, 5, 0.5, 0.5);
+    particles = simulate(40, particles, 10, 1);
 }
 
 /*----------------------------------------------------------------------------//
@@ -118,8 +119,8 @@ vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
 }
 
 // This should deal with the interactions of the partiocles.
-vector<part> simulate(double cube_length, vector<part> particles, int max_time,
-                      double box_length, double timestep){
+vector<part> simulate(double box_length, vector<part> particles, int max_time,
+                      double timestep){
 
     // We will certainly have to do a hard sphere collision if any two particles
     // become sufficiently close to each other. We should go ahead and add in 
@@ -138,6 +139,8 @@ vector<part> simulate(double cube_length, vector<part> particles, int max_time,
 
     collision_out.push_back(particle);
     collision_out.push_back(particle);
+
+    cout << "testing..." << endl;
 
     // So let's start by moving all the particles forward a single timestep
     for (int i = 0; i < max_time; i++){
@@ -196,6 +199,8 @@ vector<part> simulate(double cube_length, vector<part> particles, int max_time,
 
         }
     }
+
+return particles;
 }
 
 // UNFINISHED!!!
@@ -271,5 +276,5 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
 
 // The doppler shift stuff will return a 64 X 64 X 64 grid of voxels to use.
 // This will have to be written to a file to be used by vbots.
-vector<vox_cube> dopper(vector<part> particles){
+vector<vox_cube> doppler(vector<part> particles){
 }
