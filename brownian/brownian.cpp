@@ -205,11 +205,52 @@ vector<part> hard_sphere(part part_1, part part_2){
     // Creating the solutions vector
     vector<part> collision_out;
 
-    part soln_1, soln_2;
+    vector <part> soln;
+    
+    part particle;
 
-    // First we need to track the change in velocities
+    particle.x = 0; 
+    particle.y = 0; 
+    particle.z = 0; 
+    particle.vx = 0;
+    particle.vy = 0;
+    particle.vz = 0;
+    particle.radius = 0;
+    particle.mass = 0;
 
-    return collision_out;
+    soln.push_back(particle);
+    soln.push_back(particle);
+
+
+    // This is a time-driven simulation, we will need to define a global 
+    // variable to ultimately find the final velocity.
+
+    double del_vx = part_2.vx - part_1.vx;
+    double del_vy = part_2.vy - part_1.vy;
+    double del_vz = part_2.vz - part_1.vz;
+    double del_x = part_2.x - part_1.x;
+    double del_y = part_2.y - part_1.y;
+    double del_z = part_2.z - part_1.z;
+    double sigma = part_1.radius + part_2.radius;
+
+    double J = (2 * part_1.mass * part_2.mass *
+               ((del_vx * del_x) + (del_vy * del_y) + (del_vz * del_z)) /
+               (sigma * (part_1.mass + part_2.mass)));
+         
+    soln[0].vx = part_1.vx + (J * del_x) / (sigma * part_1.mass);
+    soln[0].vy = part_1.vy + (J * del_y) / (sigma * part_1.mass);
+    soln[0].vz = part_1.vz + (J * del_z) / (sigma * part_1.mass);
+    soln[1].vx = part_2.vx + (J * del_x) / (sigma * part_2.mass);
+    soln[1].vy = part_2.vy + (J * del_y) / (sigma * part_2.mass);
+    soln[1].vz = part_2.vz + (J * del_z) / (sigma * part_2.mass);
+
+    soln[0].mass = part_1.mass;
+    soln[0].radius = part_1.radius;
+    soln[1].mass = part_2.mass;
+    soln[1].radius = part_2.radius;
+
+
+    return soln;
 }
 
 
