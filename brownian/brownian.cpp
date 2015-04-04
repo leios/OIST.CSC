@@ -16,6 +16,8 @@
 *          mean that I could generate a series of png files rather than output
 *          files in the end, saving a good bit or writing time and space.
 *
+*   ERROR: For some reason, the particles are not moving every timestep...
+*
 *-----------------------------------------------------------------------------*/
 
 #include <iostream>
@@ -39,7 +41,7 @@ struct vox_cube{
 
 vector<part> simulate(double cube_length, vector<part> particles, int max_time,
                       double timestep);
-vector<vox_cube> doppler(vector<part> particles);
+vector<vox_cube> doppler(vector<part> motion_path);
 vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
                       double r2, double mass_1, double mass_2);
 vector <part> hard_sphere(part part_1, part part_2, double timestep);
@@ -50,8 +52,12 @@ vector <part> hard_sphere(part part_1, part part_2, double timestep);
 
 int main(){
 
-    vector<part> particles = fill_box(40, 40, 40, 1, 5, 0.5, 0.5);
-    particles = simulate(40, particles, 10, 1);
+    vector<part> particles = fill_box(400, 40, 1, 1, 5, 0.5, 0.5);
+    vector<part> motion_path = simulate(40, particles, 10, 1);
+
+    for (int i = 0; i < motion_path.size(); i++){
+        cout << motion_path[i].x << endl;
+    }
 }
 
 /*----------------------------------------------------------------------------//
@@ -125,7 +131,7 @@ vector<part> simulate(double box_length, vector<part> particles, int max_time,
     // We will certainly have to do a hard sphere collision if any two particles
     // become sufficiently close to each other. We should go ahead and add in 
     // a vector of parts...
-    vector<part> collision_out;
+    vector<part> collision_out, motion_path;
     part particle;
 
     particle.x = 0; 
@@ -198,12 +204,15 @@ vector<part> simulate(double box_length, vector<part> particles, int max_time,
 
 
         }
+
+    // Now we need to keep track of the motion path of the large particle. Each
+    // element is a timestep
+    motion_path.push_back(particles[0]);
     }
 
-return particles;
+return motion_path;
 }
 
-// UNFINISHED!!!
 // I may need to perform a "hard sphere collision" if the smaller particle is
 // within the radius of the larger particle. I think I'll assume that the radius
 // of the smaller particle is sufficiently small that I don't have to worry 
@@ -268,7 +277,36 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
     soln[1].y = part_2.y + (soln[1].vy * timestep);
     soln[1].z = part_2.z + (soln[1].vz * timestep);
 
+    // Now, it could be that the particle shoots off the side of the box.
+    // Let's fix that.
 
+    for (int q = 0; q <= 1; q++){
+
+        while (soln[q].x > 40){
+            soln[q].x -= 40;
+        }
+
+        while (soln[q].x < 0){
+            soln[q].x += 40;
+        }
+
+        while (soln[q].y > 40){
+            soln[q].y -= 40;
+        }
+
+        while (soln[q].y < 0){
+            soln[q].y += 40;
+        }
+
+        if (soln[q].z > 40){
+            soln[q].z -= 40;
+        }
+
+        if (soln[q].z < 0){
+            soln[q].z += 40;
+        }
+
+    }
 
     return soln;
 }
@@ -276,5 +314,5 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
 
 // The doppler shift stuff will return a 64 X 64 X 64 grid of voxels to use.
 // This will have to be written to a file to be used by vbots.
-vector<vox_cube> doppler(vector<part> particles){
+vector<vox_cube> doppler(vector<part> motion_path){
 }
