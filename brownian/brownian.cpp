@@ -42,7 +42,7 @@ vector<part> simulate(double cube_length, vector<part> particles, int max_time,
 vector<vox_cube> dopper(vector<part> particles);
 vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
                       double r2, double mass_1, double mass_2);
-vector <part> hard_sphere(part part_1, part part_2);
+vector <part> hard_sphere(part part_1, part part_2, double timestep);
 
 /*----------------------------------------------------------------------------//
 * MAIN
@@ -184,7 +184,12 @@ vector<part> simulate(double cube_length, vector<part> particles, int max_time,
                     particles[ii].z < (particles[iii].z + 
                                        particles[iii].radius)){
 
-                    collision_out = hard_sphere(particles[ii], particles[iii]);
+                    collision_out = hard_sphere(particles[ii], particles[iii],
+                                                timestep);
+
+                    // Now, I might have mixed these guys up. Oops.
+                    particles[ii] = collision_out[0];
+                    particles[iii] = collision_out[1];
                 }
             }
 
@@ -200,7 +205,7 @@ vector<part> simulate(double cube_length, vector<part> particles, int max_time,
 // about it. I will also assume that the larger particle's radius will fluctuate
 // by an amount that varies with the timestep such that it will "catch" all the
 // particles after they have already pierced the shell.
-vector<part> hard_sphere(part part_1, part part_2){
+vector<part> hard_sphere(part part_1, part part_2, double timestep){
 
     // Creating the solutions vector
     vector<part> collision_out;
@@ -237,6 +242,8 @@ vector<part> hard_sphere(part part_1, part part_2){
                ((del_vx * del_x) + (del_vy * del_y) + (del_vz * del_z)) /
                (sigma * (part_1.mass + part_2.mass)));
          
+    // Now we need to perform the collision
+
     soln[0].vx = part_1.vx + (J * del_x) / (sigma * part_1.mass);
     soln[0].vy = part_1.vy + (J * del_y) / (sigma * part_1.mass);
     soln[0].vz = part_1.vz + (J * del_z) / (sigma * part_1.mass);
@@ -248,6 +255,14 @@ vector<part> hard_sphere(part part_1, part part_2){
     soln[0].radius = part_1.radius;
     soln[1].mass = part_2.mass;
     soln[1].radius = part_2.radius;
+
+    soln[0].x = part_1.x + (soln[0].vx * timestep);
+    soln[0].y = part_1.y + (soln[0].vy * timestep);
+    soln[0].z = part_1.z + (soln[0].vz * timestep);
+    soln[1].x = part_2.x + (soln[1].vx * timestep);
+    soln[1].y = part_2.y + (soln[1].vy * timestep);
+    soln[1].z = part_2.z + (soln[1].vz * timestep);
+
 
 
     return soln;
