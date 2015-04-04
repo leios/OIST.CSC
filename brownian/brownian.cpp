@@ -16,7 +16,18 @@
 *          mean that I could generate a series of png files rather than output
 *          files in the end, saving a good bit or writing time and space.
 *
+*          When compiling with vbots support (for later), uncomment the 
+*          following line:
+*              #include <Python.h>
+*          And add the following flag when compiling:
+*              -I/usr/include/python3.4m
+*          If the code still does not work, use this command to find flags:
+*              python3.4-config --cflags
+*          Note that this will have to work with blender nicely... 
+*          TEST!!!
+*
 *   ERROR: For some reason, the particles are not moving every timestep...
+*          I think this is the expected result when no collision occurs.
 *
 *-----------------------------------------------------------------------------*/
 
@@ -24,6 +35,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+//#include <Python.h>
 
 using namespace std;
 
