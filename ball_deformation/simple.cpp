@@ -246,11 +246,11 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
     int dir;
     double del_x, del_y, del_z, del_tot;
 
-    // I'll need these thetas
+    // I'll need these thetas... probably.
     double theta_xz, theta_yz, theta_xy, theta_zy, theta_zx, theta_yx;
 
     // I need to get the velocities from each component in the spring direction
-    double del_vx, del_vy, del_vz, vel_fx, vel_fy, vel_fz, vel_tot;
+    double del_vx, del_vy, del_vz, vel_tot;
 
     vector <double> solution;
 
@@ -258,7 +258,7 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
 
     for (int i = 0; i < curr_sphere.size(); i++){
         for (int ii = 0; ii < 6; ii++){
-            cout << curr_sphere[i].x << endl;
+            cout << "x position is: " <<  curr_sphere[i].x << endl;
 
             // Setting which direction to check
             if (ii == 0){
@@ -335,15 +335,6 @@ vector <point> simulate(vector <point> curr_sphere, hook_param params){
             del_vz = curr_sphere[i].v_z - curr_sphere[dir].v_z;
             cout << del_vx << '\t' << del_vy << '\t' << del_vz << endl;
 
-           // I actually don't think I need the vel_f's...
-/*            if (cos(theta_zy) != 0 && cos(theta_xy) != 0...
-            vel_fz = del_vz / cos(theta_zy);
-            vel_fy = del_vy / cos(theta_xy);
-            vel_fx = del_vx / cos(theta_xy);
-            cout << vel_fx << vel_fy << vel_fx << endl;
-
-            vel_tot = vel_fx + vel_fy + vel_fz;
-*/
             vel_tot = sqrt (del_vx*del_vx + del_vy*del_vy + del_vz*del_vz);
 
             // Now solving Hooke's Law
