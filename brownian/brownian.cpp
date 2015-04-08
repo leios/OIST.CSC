@@ -53,10 +53,11 @@ struct vox_cube{
 
 vector<part> simulate(double cube_length, vector<part> particles, int max_time,
                       double timestep);
-vector<vox_cube> doppler(vector<part> motion_path);
 vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
                       double r2, double mass_1, double mass_2);
 vector <part> hard_sphere(part part_1, part part_2, double timestep);
+vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
+                         double timestep, double frequency, double box_length);
 
 /*----------------------------------------------------------------------------//
 * MAIN
@@ -324,7 +325,22 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
 }
 
 
-// The doppler shift stuff will return a 64 X 64 X 64 grid of voxels to use.
-// This will have to be written to a file to be used by vbots.
-vector<vox_cube> doppler(vector<part> motion_path){
+// The doppler shift stuff will return a 64 X 64 X 64 grid of voxels to use,
+// Which might be able to be visualized on the fly through blender scripts.
+// This function will emit a sphere that grows at a constant velocity based
+// on the particle's frequency. This means that based on the sphere's position,
+// the individual voxels might read in different colors, which are dependent
+// on the time at which they see the wavefronts. 
+vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
+                         double timestep, double frequency, double box_length){
+
+    // We have the particle's position and the timestep it's on, so we need the
+    // voxel box and the wavefronts.
+
+    // I guess I should take the position of the source of the next pulse and
+    // then calculate at which time it will affect each individual voxel. On the
+    // voxel side, I need to keep track of the time difference between the 
+    // wavefronts. This time difference is essentially a period and can be 
+    // translated into a color relatively easily (I think).
+    
 }
