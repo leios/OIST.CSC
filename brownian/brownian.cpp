@@ -47,8 +47,15 @@ struct part{
     double radius, mass, x, y, z, vx, vy, vz;             // Particle parameters
 };
 
+// Each voxel must have an x, y, z position, a current color value, and a series
+// of times at which it will change color.
 struct vox_cube{
-    double x, y, z, curr_color, next_color;
+    double x, y, z, color, time;
+};
+
+// Finally, we need a structure for the pulse
+struct pulse{
+    double x, y, z, radius;
 };
 
 vector<part> simulate(double cube_length, vector<part> particles, int max_time,
@@ -337,12 +344,6 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
     // We have the particle's position and the timestep it's on, so we need the
     // voxel box and the wavefronts.
 
-    // I guess I should take the position of the source of the next pulse and
-    // then calculate at which time it will affect each individual voxel. On the
-    // voxel side, I need to keep track of the time difference between the 
-    // wavefronts. This time difference is essentially a period and can be 
-    // translated into a color relatively easily (I think).
-
     // First, the voxel box!
     vector<vox_cube> voxels;
     vox_cube voxel;
@@ -364,4 +365,10 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
         }
     }
     
+
+    // Now we need to go through each timestep from the motion path and get the
+    // particle pulsing! We should keep the pulses in a vector and delete them
+    // when they get too large. At every step, we query all the points and 
+    // ask if the points are beyond the radius of any of the pulses from their
+    // respective origins. If so, we update the voxel's time and color.
 }
