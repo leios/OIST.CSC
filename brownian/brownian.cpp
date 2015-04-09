@@ -66,7 +66,7 @@ vector<part> simulate(double cube_length, vector<part> particles, int max_time,
 vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
                       double r2, double mass_1, double mass_2);
 vector <part> hard_sphere(part part_1, part part_2, double timestep);
-vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
+void doppler(vector<part> motion_path, double cube_res,
                          double timestep, int period, double box_length);
 
 /*----------------------------------------------------------------------------//
@@ -78,9 +78,11 @@ int main(){
     vector<part> particles = fill_box(400, 40, 1, 1, 5, 0.5, 0.5);
     vector<part> motion_path = simulate(40, particles, 10, 1);
 
-    for (int i = 0; i < motion_path.size(); i++){
+    doppler(motion_path, 4, 1, 1, 400);
+/*    for (int i = 0; i < motion_path.size(); i++){
         cout << motion_path[i].x << endl;
     }
+*/
 }
 
 /*----------------------------------------------------------------------------//
@@ -341,7 +343,10 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
 // on the particle's period. This means that based on the sphere's position,
 // the individual voxels might read in different colors, which are dependent
 // on the time at which they see the wavefronts. 
-vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
+// NOTES: This function is void. I could return the voxels, but don't think it's
+//        Necessary...
+//        Also, this dependence on max velocity makes the simulations wonky.
+void doppler(vector<part> motion_path, double cube_res,
                          double timestep, int period, double box_length){
 
     // We have the particle's position and the timestep it's on, so we need the
@@ -399,6 +404,7 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
 
         // First, let's check to see whether the particle pulses.
         time = i * timestep;
+        cout << time << endl;
         if (i % period == 0){
             wavefront.x = motion_path[i].x;
             wavefront.y = motion_path[i].y;
@@ -407,10 +413,11 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
             wavefront.id = wave_count;
             wavefronts.push_back(wavefront);
             wave_count += 1;
+            cout << "wavefront made" << endl;
         }
 
         // Now let's update all the pulses and erase any that are outside
-        for (int ii = 0; i < wavefronts.size(); ii++){
+        for (int ii = 0; ii < wavefronts.size(); ii++){
 
             wavefronts[ii].radius += max_vel * time;
 
@@ -443,11 +450,10 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
                 (wavefronts[ii].x - wavefronts[ii].radius) < box_length &&
                 (wavefronts[ii].y - wavefronts[ii].radius) < box_length &&
                 (wavefronts[ii].z - wavefronts[ii].radius) < box_length ){
-                    wavefronts.erase(wavefronts.begin() + ii - 1);
+                    wavefronts.erase(wavefronts.begin() + ii);
             }
         }
 
     }
 
-    return voxels;
 }
