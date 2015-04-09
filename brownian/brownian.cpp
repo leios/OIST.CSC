@@ -48,7 +48,7 @@ struct part{
 };
 
 struct vox_cube{
-    double x, y, z, intensity;
+    double x, y, z, curr_color, next_color;
 };
 
 vector<part> simulate(double cube_length, vector<part> particles, int max_time,
@@ -342,5 +342,26 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
     // voxel side, I need to keep track of the time difference between the 
     // wavefronts. This time difference is essentially a period and can be 
     // translated into a color relatively easily (I think).
+
+    // First, the voxel box!
+    vector<vox_cube> voxels;
+    vox_cube voxel
+
+    double x, y, z;
+    for (ix = 0; ix < (cube_res); ix++){
+
+        for (iy = 0; iy < cube_res; iy++){
+
+            for (iz = 0; iz < cube_res; iz++){
+
+                voxel.x = (ix / cube_res) * box_length;
+                voxel.y = (iy / cube_res) * box_length;
+                voxel.z = (iy / cube_res) * box_length;
+
+                voxels.push_back(voxel);
+                
+            }
+        }
+    }
     
 }
