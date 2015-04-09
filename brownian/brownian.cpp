@@ -35,6 +35,8 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include <cmath>
+#include <algorithm>              // This is for "find." may be removed later...
 //#include <Python.h>
 
 using namespace std;
@@ -51,11 +53,12 @@ struct part{
 // of times at which it will change color.
 struct vox_cube{
     double x, y, z, color, time;
+    vector<int> prev_id;
 };
 
 // Finally, we need a structure for the pulse
 struct pulse{
-    double x, y, z, radius;
+    double x, y, z, radius, id;
 };
 
 vector<part> simulate(double cube_length, vector<part> particles, int max_time,
@@ -64,7 +67,7 @@ vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
                       double r2, double mass_1, double mass_2);
 vector <part> hard_sphere(part part_1, part part_2, double timestep);
 vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
-                         double timestep, double frequency, double box_length);
+                         double timestep, int period, double box_length);
 
 /*----------------------------------------------------------------------------//
 * MAIN
@@ -335,11 +338,11 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
 // The doppler shift stuff will return a 64 X 64 X 64 grid of voxels to use,
 // Which might be able to be visualized on the fly through blender scripts.
 // This function will emit a sphere that grows at a constant velocity based
-// on the particle's frequency. This means that based on the sphere's position,
+// on the particle's period. This means that based on the sphere's position,
 // the individual voxels might read in different colors, which are dependent
 // on the time at which they see the wavefronts. 
 vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
-                         double timestep, double frequency, double box_length){
+                         double timestep, int period, double box_length){
 
     // We have the particle's position and the timestep it's on, so we need the
     // voxel box and the wavefronts.
@@ -358,6 +361,7 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
                 voxel.x = (ix / cube_res) * box_length;
                 voxel.y = (iy / cube_res) * box_length;
                 voxel.z = (iy / cube_res) * box_length;
+                voxel.time = 0;
 
                 voxels.push_back(voxel);
                 
@@ -365,10 +369,85 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
         }
     }
     
-
     // Now we need to go through each timestep from the motion path and get the
     // particle pulsing! We should keep the pulses in a vector and delete them
     // when they get too large. At every step, we query all the points and 
     // ask if the points are beyond the radius of any of the pulses from their
     // respective origins. If so, we update the voxel's time and color.
+
+    vector <pulse> wavefronts;
+    pulse wavefront;
+    double time;
+
+    // To normalize everything correctly (and to find the velocity of the 
+    // wavefronts, we need to find the maximum veocity in the motion_path 
+    // vector. NOTE: THIS MIGHT NEED TO CHANGE IN THE FUTURE!!!
+
+    double velocity, dx, dy ,dz, max_vel = 0;
+    int wave_count =0;
+
+    for (int i = 0; i < motion_path.size(); i++){
+        velocity = (motion_path[i].vx * motion_path[i].vx) + 
+                   (motion_path[i].vy * motion_path[i].vy) +
+                   (motion_path[i].vz * motion_path[i].vz);
+        if (velocity > max_vel){
+            max_vel = velocity;
+        }
+    }
+
+    for (int i = 0; i < motion_path.size(); i++){
+
+        // First, let's check to see whether the particle pulses.
+        time = i * timestep;
+        if (i % period == 0){
+            wavefront.x = motion_path[i].x;
+            wavefront.y = motion_path[i].y;
+            wavefront.z = motion_path[i].z;
+            wavefront.radius = 0;
+            wavefront.id = wave_count;
+            wavefronts.push_back(wavefront);
+            wave_count += 1;
+        }
+
+        // Now let's update all the pulses and erase any that are outside
+        for (int ii = 0; i < wavefronts.size(); ii++){
+
+            wavefronts[ii].radius += max_vel * time;
+
+            // ... and let's check to see if the new wavefront hits any vosels
+            // while we are at it!
+            for (int iii = 0; iii < voxels.size(); iii++){
+
+                dx = voxels[iii].x - wavefronts[ii].x;
+                dy = voxels[iii].y - wavefronts[ii].y;
+                dz = voxels[iii].z - wavefronts[ii].z;
+
+                // The latter part of this if statement is just checking to see
+                // whether the wavefront id is within the list of previous id's
+                // the voxel has seen this far.
+                if (sqrt((dx*dx) + (dy*dy) + (dz*dz)) < wavefronts[ii].radius &&
+                    (find(voxels[iii].prev_id.begin(), 
+                          voxels[iii].prev_id.end(),
+                          wavefronts[ii].id) == voxels[iii].prev_id.end())){
+
+                    voxels[iii].color = time - voxels[iii].time;
+                    voxels[iii].time = time;
+                    voxels[iii].prev_id.push_back(wavefronts[ii].id);
+                }
+            }
+
+            // Finally, let's remove any unnecessary wavefronts.
+            if ((wavefronts[ii].radius + wavefronts[ii].x) > box_length &&
+                (wavefronts[ii].radius + wavefronts[ii].y) > box_length &&
+                (wavefronts[ii].radius + wavefronts[ii].z) > box_length &&
+                (wavefronts[ii].x - wavefronts[ii].radius) < box_length &&
+                (wavefronts[ii].y - wavefronts[ii].radius) < box_length &&
+                (wavefronts[ii].z - wavefronts[ii].radius) < box_length ){
+                    wavefronts.erase(wavefronts.begin() + ii - 1);
+            }
+        }
+
+    }
+
+    return voxels;
 }
