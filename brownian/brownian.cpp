@@ -345,14 +345,14 @@ vector<vox_cube> doppler(vector<part> motion_path, double cube_res,
 
     // First, the voxel box!
     vector<vox_cube> voxels;
-    vox_cube voxel
+    vox_cube voxel;
 
     double x, y, z;
-    for (ix = 0; ix < (cube_res); ix++){
+    for (int ix = 0; ix < (cube_res); ix++){
 
-        for (iy = 0; iy < cube_res; iy++){
+        for (int iy = 0; iy < cube_res; iy++){
 
-            for (iz = 0; iz < cube_res; iz++){
+            for (int iz = 0; iz < cube_res; iz++){
 
                 voxel.x = (ix / cube_res) * box_length;
                 voxel.y = (iy / cube_res) * box_length;
