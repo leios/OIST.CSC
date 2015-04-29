@@ -37,6 +37,7 @@
 #include <time.h>
 #include <cmath>
 #include <algorithm>              // This is for "find." may be removed later...
+#include <fstream>
 //#include <Python.h>
 
 using namespace std;
@@ -75,14 +76,10 @@ void doppler(vector<part> motion_path, double cube_res,
 
 int main(){
 
-    vector<part> particles = fill_box(400, 40, 1, 1, 5, 0.5, 0.5);
-    vector<part> motion_path = simulate(40, particles, 10, 1);
+    vector<part> particles = fill_box(400, 10, 1, 0.1, 1, 0.1, 1);
+    vector<part> motion_path = simulate(10, particles, 7500, 1);
 
-    doppler(motion_path, 4, 1, 1, 400);
-/*    for (int i = 0; i < motion_path.size(); i++){
-        cout << motion_path[i].x << endl;
-    }
-*/
+    doppler(motion_path, 16, 1, 100, 10);
 }
 
 /*----------------------------------------------------------------------------//
@@ -349,6 +346,14 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
 void doppler(vector<part> motion_path, double cube_res,
                          double timestep, int period, double box_length){
 
+    // Let's open the file for writing.
+    ofstream voxfile;
+    voxfile.open("/storage/videos/brownian/out.pppm");
+
+    for (int q = 0; q < 8; q++){
+    voxfile << endl;
+    }
+
     // We have the particle's position and the timestep it's on, so we need the
     // voxel box and the wavefronts.
 
@@ -454,6 +459,19 @@ void doppler(vector<part> motion_path, double cube_res,
             }
         }
 
+        voxfile << motion_path[i].x << '\t' << motion_path[i].y << '\t' 
+                << motion_path[i].z << '\t' << motion_path[i].vx << '\t' 
+                << motion_path[i].vy << '\t' << motion_path[i].vz << '\t' 
+                << 1 << '\t' << 1 << endl;
+
+        for (int q = 0; q <= cube_res * cube_res * cube_res; q++){
+            voxfile << voxels[q].x << '\t' << voxels[q].y << '\t'
+                    << voxels[q].z << '\t' << voxels[q].color << endl;
+        }
+
+        voxfile << endl << endl;
+
     }
 
+    voxfile.close();
 }
