@@ -26,8 +26,11 @@
 *          Note that this will have to work with blender nicely... 
 *          TEST!!!
 *
-*   ERROR: For some reason, the particles are not moving every timestep...
-*          I think this is the expected result when no collision occurs.
+*   ERROR: The motion_path vector is not updating. It is likely an issue with
+*          the hard sphere collision.
+*
+*          I think there is also a problem with the wavefront generation.
+*          Even with the above error fixed, the color values are all still 0
 *
 *-----------------------------------------------------------------------------*/
 
@@ -62,11 +65,15 @@ struct pulse{
     double x, y, z, radius, id;
 };
 
+// Note: particle 2 is the big particle. 
 vector<part> simulate(double cube_length, vector<part> particles, int max_time,
                       double timestep);
+
 vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
                       double r2, double mass_1, double mass_2);
-vector <part> hard_sphere(part part_1, part part_2, double timestep);
+
+vector <part> hard_sphere(part part_1, part part_2, double timestep,
+                          double box_length);
 void doppler(vector<part> motion_path, double cube_res,
                          double timestep, int period, double box_length);
 
@@ -76,10 +83,15 @@ void doppler(vector<part> motion_path, double cube_res,
 
 int main(){
 
-    vector<part> particles = fill_box(400, 10, 1, 0.1, 1, 0.1, 1);
-    vector<part> motion_path = simulate(10, particles, 7500, 1);
+    vector<part> particles = fill_box(4000, 10, 1, 0.1, 1, 0.1, 1);
+    vector<part> motion_path = simulate(10, particles, 50, 1);
 
-    doppler(motion_path, 16, 1, 100, 10);
+    for (int i = 0; i < motion_path.size(); i++){
+        cout << motion_path[i].x << '\t' << motion_path[i].y << '\t'
+             << motion_path[i].z << '\t' << motion_path[i].vx << '\t'
+             << motion_path[i].vy << '\t' << motion_path[i].vz << endl;
+    }
+    doppler(motion_path, 16, 1, 1, 10);
 }
 
 /*----------------------------------------------------------------------------//
@@ -140,7 +152,7 @@ vector<part> fill_box(int pnum, double cube_length, double max_vel, double r1,
     }
 
     for (int i = 0; i < particles.size(); i++){
-        cout << i << '\t' << particles[i].x << endl;
+        cout << i << '\t' << particles[i].x << '\t' << particles[i].vx << endl;
     }
 
     return particles;
@@ -171,35 +183,11 @@ vector<part> simulate(double box_length, vector<part> particles, int max_time,
     cout << "testing..." << endl;
 
     // So let's start by moving all the particles forward a single timestep
+    // Note that I check collisions first, then march the particles.
     for (int i = 0; i < max_time; i++){
         for (int ii = 0; ii < particles.size(); ii++){
-            particles[ii].x = particles[ii].vx * timestep;
-            if (particles[ii].x > box_length){
-                particles[ii].x -= box_length;
-            }
 
-            if (particles[ii].x < 0){
-                particles[ii].x += box_length;
-            }
-
-            particles[ii].y = particles[ii].vy * timestep;
-            if (particles[ii].y > box_length){
-                particles[ii].y -= box_length;
-            }
-
-            if (particles[ii].y < 0){
-                particles[ii].y += box_length;
-            }
-
-            particles[ii].z = particles[ii].vz * timestep;
-            if (particles[ii].z > box_length){
-                particles[ii].z -= box_length;
-            }
-
-            if (particles[ii].z < 0){
-                particles[ii].z += box_length;
-            }
-
+            // Checking for particle collisions
             // I really don't like all these nested loops...
             for (int iii = 0; iii < particles.size(); iii++){
                 if (particles[ii].x > (particles[iii].x - 
@@ -213,10 +201,11 @@ vector<part> simulate(double box_length, vector<part> particles, int max_time,
                     particles[ii].y < (particles[iii].y + 
                                        particles[iii].radius) &&
                     particles[ii].z < (particles[iii].z + 
-                                       particles[iii].radius)){
+                                       particles[iii].radius) &&
+                    ii != iii){
 
                     collision_out = hard_sphere(particles[ii], particles[iii],
-                                                timestep);
+                                                timestep,box_length);
 
                     // Now, I might have mixed these guys up. Oops.
                     particles[ii] = collision_out[0];
@@ -224,6 +213,35 @@ vector<part> simulate(double box_length, vector<part> particles, int max_time,
                 }
             }
 
+            // Marching the particles forward
+            // Note that I keep the particles in the box by +/- box_length.
+
+            particles[ii].x += particles[ii].vx * timestep;
+            while (particles[ii].x > box_length){
+                particles[ii].x -= box_length;
+            }
+
+            while (particles[ii].x < 0){
+                particles[ii].x += box_length;
+            }
+
+            particles[ii].y += particles[ii].vy * timestep;
+            while (particles[ii].y > box_length){
+                particles[ii].y -= box_length;
+            }
+
+            while (particles[ii].y < 0){
+                particles[ii].y += box_length;
+            }
+
+            particles[ii].z += particles[ii].vz * timestep;
+            while (particles[ii].z > box_length){
+                particles[ii].z -= box_length;
+            }
+
+            while (particles[ii].z < 0){
+                particles[ii].z += box_length;
+            }
 
         }
 
@@ -241,7 +259,8 @@ return motion_path;
 // about it. I will also assume that the larger particle's radius will fluctuate
 // by an amount that varies with the timestep such that it will "catch" all the
 // particles after they have already pierced the shell.
-vector<part> hard_sphere(part part_1, part part_2, double timestep){
+vector<part> hard_sphere(part part_1, part part_2, double timestep,
+                         double box_length){
 
     // Creating the solutions vector
     vector<part> collision_out;
@@ -277,15 +296,17 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
     double J = (2 * part_1.mass * part_2.mass *
                ((del_vx * del_x) + (del_vy * del_y) + (del_vz * del_z)) /
                (sigma * (part_1.mass + part_2.mass)));
+
+    //cout << J << endl;
          
     // Now we need to perform the collision
 
     soln[0].vx = part_1.vx + (J * del_x) / (sigma * part_1.mass);
     soln[0].vy = part_1.vy + (J * del_y) / (sigma * part_1.mass);
     soln[0].vz = part_1.vz + (J * del_z) / (sigma * part_1.mass);
-    soln[1].vx = part_2.vx + (J * del_x) / (sigma * part_2.mass);
-    soln[1].vy = part_2.vy + (J * del_y) / (sigma * part_2.mass);
-    soln[1].vz = part_2.vz + (J * del_z) / (sigma * part_2.mass);
+    soln[1].vx = part_2.vx - (J * del_x) / (sigma * part_2.mass);
+    soln[1].vy = part_2.vy - (J * del_y) / (sigma * part_2.mass);
+    soln[1].vz = part_2.vz - (J * del_z) / (sigma * part_2.mass);
 
     soln[0].mass = part_1.mass;
     soln[0].radius = part_1.radius;
@@ -304,28 +325,28 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep){
 
     for (int q = 0; q <= 1; q++){
 
-        while (soln[q].x > 40){
-            soln[q].x -= 40;
+        while (soln[q].x > box_length){
+            soln[q].x -= box_length;
         }
 
         while (soln[q].x < 0){
-            soln[q].x += 40;
+            soln[q].x += box_length;
         }
 
-        while (soln[q].y > 40){
-            soln[q].y -= 40;
+        while (soln[q].y > box_length){
+            soln[q].y -= box_length;
         }
 
         while (soln[q].y < 0){
-            soln[q].y += 40;
+            soln[q].y += box_length;
         }
 
-        if (soln[q].z > 40){
-            soln[q].z -= 40;
+        if (soln[q].z > box_length){
+            soln[q].z -= box_length;
         }
 
         if (soln[q].z < 0){
-            soln[q].z += 40;
+            soln[q].z += box_length;
         }
 
     }
@@ -397,13 +418,14 @@ void doppler(vector<part> motion_path, double cube_res,
     int wave_count =0;
 
     for (int i = 0; i < motion_path.size(); i++){
-        velocity = (motion_path[i].vx * motion_path[i].vx) + 
+        velocity = sqrt((motion_path[i].vx * motion_path[i].vx) + 
                    (motion_path[i].vy * motion_path[i].vy) +
-                   (motion_path[i].vz * motion_path[i].vz);
+                   (motion_path[i].vz * motion_path[i].vz));
         if (velocity > max_vel){
             max_vel = velocity;
         }
     }
+    cout << max_vel << endl;
 
     for (int i = 0; i < motion_path.size(); i++){
 
@@ -424,7 +446,7 @@ void doppler(vector<part> motion_path, double cube_res,
         // Now let's update all the pulses and erase any that are outside
         for (int ii = 0; ii < wavefronts.size(); ii++){
 
-            wavefronts[ii].radius += max_vel * time;
+            wavefronts[ii].radius += max_vel * timestep;
 
             // ... and let's check to see if the new wavefront hits any vosels
             // while we are at it!
@@ -440,9 +462,10 @@ void doppler(vector<part> motion_path, double cube_res,
                 if (sqrt((dx*dx) + (dy*dy) + (dz*dz)) < wavefronts[ii].radius &&
                     (find(voxels[iii].prev_id.begin(), 
                           voxels[iii].prev_id.end(),
-                          wavefronts[ii].id) == voxels[iii].prev_id.end())){
+                          wavefronts[ii].id) == voxels[iii].prev_id.end()) &&
+                          time != voxels[iii].time){
 
-                    voxels[iii].color = time - voxels[iii].time;
+                    voxels[iii].color = max_vel / (time - voxels[iii].time);
                     voxels[iii].time = time;
                     voxels[iii].prev_id.push_back(wavefronts[ii].id);
                 }
@@ -464,7 +487,7 @@ void doppler(vector<part> motion_path, double cube_res,
                 << motion_path[i].vy << '\t' << motion_path[i].vz << '\t' 
                 << 1 << '\t' << 1 << endl;
 
-        for (int q = 0; q <= cube_res * cube_res * cube_res; q++){
+        for (int q = 0; q < cube_res * cube_res * cube_res; q++){
             voxfile << voxels[q].x << '\t' << voxels[q].y << '\t'
                     << voxels[q].z << '\t' << voxels[q].color << endl;
         }
