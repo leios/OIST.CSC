@@ -91,7 +91,7 @@ int main(){
              << motion_path[i].z << '\t' << motion_path[i].vx << '\t'
              << motion_path[i].vy << '\t' << motion_path[i].vz << endl;
     }
-    doppler(motion_path, 16, 1, 1, 10);
+    doppler(motion_path, 64, 1, 1, 10);
 }
 
 /*----------------------------------------------------------------------------//
@@ -391,7 +391,7 @@ void doppler(vector<part> motion_path, double cube_res,
 
                 voxel.x = (ix / cube_res) * box_length;
                 voxel.y = (iy / cube_res) * box_length;
-                voxel.z = (iy / cube_res) * box_length;
+                voxel.z = (iz / cube_res) * box_length;
                 voxel.time = 0;
 
                 voxels.push_back(voxel);
