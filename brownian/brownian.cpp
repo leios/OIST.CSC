@@ -26,11 +26,11 @@
 *          Note that this will have to work with blender nicely... 
 *          TEST!!!
 *
-*   ERROR: The motion_path vector is not updating. It is likely an issue with
-*          the hard sphere collision.
-*
-*          I think there is also a problem with the wavefront generation.
-*          Even with the above error fixed, the color values are all still 0
+*   ERROR: The motion_path vector does not seem to be updating correctly after
+*          bouncing off the wall. Note that this cannot be a periodic system 
+*          because we need to see the interior color components of the voxel
+*          data. If the system is directionally periodic, the wavefronts will
+*          mix in odd ways that are not physical.
 *
 *-----------------------------------------------------------------------------*/
 
@@ -83,8 +83,8 @@ void doppler(vector<part> motion_path, double cube_res,
 
 int main(){
 
-    vector<part> particles = fill_box(4000, 10, 1, 0.1, 1, 0.1, 1);
-    vector<part> motion_path = simulate(10, particles, 50, 1);
+    vector<part> particles = fill_box(4000, 10, 0.1, 0.1, 1, 0.1, 1);
+    vector<part> motion_path = simulate(10, particles, 100, 1);
 
     for (int i = 0; i < motion_path.size(); i++){
         cout << motion_path[i].x << '\t' << motion_path[i].y << '\t'
@@ -214,33 +214,27 @@ vector<part> simulate(double box_length, vector<part> particles, int max_time,
             }
 
             // Marching the particles forward
-            // Note that I keep the particles in the box by +/- box_length.
+            // Note that I keep the particles in the box by flipping velocities.
 
             particles[ii].x += particles[ii].vx * timestep;
-            while (particles[ii].x > box_length){
-                particles[ii].x -= box_length;
-            }
-
-            while (particles[ii].x < 0){
-                particles[ii].x += box_length;
+            if (particles[ii].x > box_length || 
+                particles[ii].x < 0){
+                particles[ii].vx = -particles[ii].vx;
+                particles[ii].x += particles[ii].vx * timestep;
             }
 
             particles[ii].y += particles[ii].vy * timestep;
-            while (particles[ii].y > box_length){
-                particles[ii].y -= box_length;
-            }
-
-            while (particles[ii].y < 0){
-                particles[ii].y += box_length;
+            if (particles[ii].y > box_length ||
+                particles[ii].y < 0){
+                particles[ii].vy = -particles[ii].vy;
+                particles[ii].y += particles[ii].vy * timestep;
             }
 
             particles[ii].z += particles[ii].vz * timestep;
-            while (particles[ii].z > box_length){
-                particles[ii].z -= box_length;
-            }
-
-            while (particles[ii].z < 0){
-                particles[ii].z += box_length;
+            if (particles[ii].z > box_length ||
+                particles[ii].z < 0){
+                particles[ii].vz = -particles[ii].vz;
+                particles[ii].z += particles[ii].vz * timestep;
             }
 
         }
@@ -325,28 +319,22 @@ vector<part> hard_sphere(part part_1, part part_2, double timestep,
 
     for (int q = 0; q <= 1; q++){
 
-        while (soln[q].x > box_length){
-            soln[q].x -= box_length;
+        if (soln[q].x > box_length ||
+            soln[q].x < 0){
+            soln[q].vx = -soln[q].vx;
+            soln[q].x += soln[q].vx * timestep;
         }
 
-        while (soln[q].x < 0){
-            soln[q].x += box_length;
+        if (soln[q].y > box_length ||
+            soln[q].y < 0){
+            soln[q].vy = -soln[q].vy;
+            soln[q].y += soln[q].vy * timestep;
         }
 
-        while (soln[q].y > box_length){
-            soln[q].y -= box_length;
-        }
-
-        while (soln[q].y < 0){
-            soln[q].y += box_length;
-        }
-
-        if (soln[q].z > box_length){
-            soln[q].z -= box_length;
-        }
-
-        if (soln[q].z < 0){
-            soln[q].z += box_length;
+        if (soln[q].z > box_length ||
+            soln[q].z < 0){
+            soln[q].vz = -soln[q].vz;
+            soln[q].z += soln[q].vz * timestep;
         }
 
     }
