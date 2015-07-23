@@ -1,11 +1,11 @@
-SimuLeios
+OIST Computer Science Club Stuff
 =========
 
 Learning to code with scientific examples.
 
 =========
 
-I will be teaching my subscribers how to code in C++, Fortran, and Python in the next few months and have decided to use github for this purpose. We will then start working on all sorts of coding projects.
+I will be teaching people how to code in C++, Fortran, and Python in the next few months and have decided to use github for this purpose. We will then start working on all sorts of coding projects.
 
 =========
 
