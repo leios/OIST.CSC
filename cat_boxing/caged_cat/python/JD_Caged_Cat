@@ -1,0 +1,31 @@
+'''
+Created on Nov 4, 2014
+
+@author: John Deyrup
+'''
+
+from random import randint
+
+small_boxes = 12
+small_box_array = []
+medium_boxes = 6
+medium_box_array = []
+large_boxes = 4
+large_box_array = []
+total_array = []
+
+while(small_boxes+medium_boxes+large_boxes > 0):
+    cat = randint(1,101)
+    total_array.append(cat)
+    if(cat<33 and small_boxes >0):
+        small_boxes -= 1
+        small_box_array.append(cat)
+    elif(cat>=66 and large_boxes > 0):
+        large_boxes -= 1
+        large_box_array.append(cat)
+    elif(medium_boxes > 0):
+        medium_boxes -= 1
+        medium_box_array.append(cat)
+        
+print(" There are cats of size:", small_box_array, "in the small boxes.", '\n There are cats of size:', medium_box_array, 
+      "in the medium boxes. \n There are cats of size:",large_box_array, "in the large boxes", "\n We generated:", len(total_array), "random cats")
